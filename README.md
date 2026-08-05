@@ -1,6 +1,6 @@
 # Portfolio — NTONDELE MPELA Floriant
 
-Site web personnel de **NTONDELE MPELA Floriant**, Économiste et Data Analyst spécialisé dans le suivi-évaluation des projets d'investissement public. Le site est hébergé via GitHub Pages à l'adresse [collecte-analyse.github.io](https://collecte-analyse.github.io/).
+Site web personnel de **NTONDELE MPELA Floriant**, Économètre et Data Manager spécialisé dans le suivi-évaluation des projets d'investissement public. Le site est hébergé via GitHub Pages à l'adresse [collecte-analyse.github.io](https://collecte-analyse.github.io/).
 
 ## Contenu du site
 
