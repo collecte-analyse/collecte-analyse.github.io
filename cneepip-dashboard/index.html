@@ -1,0 +1,466 @@
+<meta charset="utf-8">
+<title>Suivi Collecte CNEEPIP</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Serif:wght@500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    color-scheme: light;
+    --page-plane:      #f2f0ea;
+    --surface:         #fdfcfa;
+    --surface-raised:  #ffffff;
+    --text-primary:    #17181a;
+    --text-secondary:  #5b594f;
+    --text-muted:      #8b8a7e;
+    --border:          rgba(23,24,26,0.10);
+    --border-strong:   rgba(23,24,26,0.16);
+    --brand-navy:      #1f3864;
+    --brand-navy-ink:  #1f3864;
+    --header-bg:       #1f3864;
+    --header-ink:      #eef1f6;
+    --header-ink-dim:  #b7c3d9;
+    --data-hue:        #2a78d6;
+    --data-hue-soft:   rgba(42,120,214,0.12);
+    --data-hue-dim:    #93b8e4;
+    --good:    #0ca30c;
+    --warning: #fab219;
+    --critical:#d03b3b;
+    --grid-line: #e4e2da;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      color-scheme: dark;
+      --page-plane:      #101113;
+      --surface:         #1a1b1e;
+      --surface-raised:  #202226;
+      --text-primary:    #f2f1ee;
+      --text-secondary:  #b8b6ac;
+      --text-muted:      #83817a;
+      --border:          rgba(255,255,255,0.10);
+      --border-strong:   rgba(255,255,255,0.16);
+      --brand-navy:      #7d9bc7;
+      --brand-navy-ink:  #9db4d8;
+      --header-bg:       #0f1b30;
+      --header-ink:      #eef1f6;
+      --header-ink-dim:  #8ea1c2;
+      --data-hue:        #3987e5;
+      --data-hue-soft:   rgba(57,135,229,0.16);
+      --data-hue-dim:    #3d557a;
+      --good:    #0ca30c;
+      --warning: #fab219;
+      --critical:#e66767;
+      --grid-line: #2c2c2a;
+    }
+  }
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --page-plane:      #101113;
+    --surface:         #1a1b1e;
+    --surface-raised:  #202226;
+    --text-primary:    #f2f1ee;
+    --text-secondary:  #b8b6ac;
+    --text-muted:      #83817a;
+    --border:          rgba(255,255,255,0.10);
+    --border-strong:   rgba(255,255,255,0.16);
+    --brand-navy:      #7d9bc7;
+    --brand-navy-ink:  #9db4d8;
+    --header-bg:       #0f1b30;
+    --header-ink:      #eef1f6;
+    --header-ink-dim:  #8ea1c2;
+    --data-hue:        #3987e5;
+    --data-hue-soft:   rgba(57,135,229,0.16);
+    --data-hue-dim:    #3d557a;
+    --good:    #0ca30c;
+    --warning: #fab219;
+    --critical:#e66767;
+    --grid-line: #2c2c2a;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: var(--page-plane);
+    color: var(--text-primary);
+    font-family: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  h1, h2, h3 { font-family: "IBM Plex Serif", Georgia, serif; font-weight: 600; margin: 0; text-wrap: balance; }
+  .eyebrow {
+    font-size: 12px; font-weight: 600; letter-spacing: 0.09em; text-transform: uppercase;
+    color: var(--brand-navy-ink);
+  }
+
+  header.top {
+    background: var(--header-bg);
+    color: var(--header-ink);
+    padding: 28px clamp(16px, 4vw, 48px) 26px;
+  }
+  header.top .wrap {
+    max-width: 1180px; margin: 0 auto;
+    display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; flex-wrap: wrap;
+  }
+  header.top .eyebrow { color: var(--header-ink-dim); }
+  header.top h1 { font-size: clamp(22px, 3vw, 30px); color: var(--header-ink); margin-top: 6px; }
+  header.top .sync {
+    text-align: right; font-size: 13px; color: var(--header-ink-dim); line-height: 1.5;
+  }
+  header.top .sync strong { color: var(--header-ink); font-weight: 600; }
+
+  main { max-width: 1180px; margin: 0 auto; padding: 32px clamp(16px, 4vw, 48px) 64px; }
+
+  section { margin-top: 40px; }
+  section:first-of-type { margin-top: 0; }
+  .section-head { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; margin-bottom: 16px; flex-wrap: wrap; }
+  .section-head h2 { font-size: 19px; }
+  .section-head .note { font-size: 13px; color: var(--text-muted); }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+  }
+
+  /* stat tiles */
+  .tiles { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+  @media (max-width: 860px) { .tiles { grid-template-columns: repeat(2, 1fr); } }
+  .tile { padding: 18px 20px; }
+  .tile .label { font-size: 12.5px; color: var(--text-secondary); font-weight: 500; }
+  .tile .value { font-size: 30px; font-weight: 600; margin-top: 6px; letter-spacing: -0.01em; }
+  .tile .caption { font-size: 12.5px; color: var(--text-muted); margin-top: 4px; }
+  .tile .chip { display: inline-flex; align-items: center; gap: 6px; font-size: 12.5px; font-weight: 600; margin-top: 8px; }
+  .dot { width: 8px; height: 8px; border-radius: 50%; flex: none; }
+  .dot.good { background: var(--good); }
+  .dot.warning { background: var(--warning); }
+  .dot.critical { background: var(--critical); }
+
+  /* trend chart */
+  .trend-card { padding: 22px 24px 16px; }
+  #trendSvg { width: 100%; height: 220px; display: block; overflow: visible; }
+  .axis-label { font-size: 11px; fill: var(--text-muted); font-family: "IBM Plex Sans", sans-serif; }
+  .grid-line { stroke: var(--grid-line); stroke-width: 1; }
+  .trend-line { fill: none; stroke: var(--data-hue); stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
+  .trend-area { fill: var(--data-hue); opacity: 0.10; }
+  .trend-dot { fill: var(--surface); stroke: var(--data-hue); stroke-width: 2; }
+  .crosshair { stroke: var(--border-strong); stroke-width: 1; pointer-events: none; }
+
+  .tooltip {
+    position: absolute; pointer-events: none; background: var(--surface-raised);
+    border: 1px solid var(--border-strong); border-radius: 8px; padding: 8px 11px;
+    font-size: 12.5px; box-shadow: 0 4px 16px rgba(0,0,0,0.12); opacity: 0; transition: opacity 0.1s;
+    white-space: nowrap; z-index: 5;
+  }
+  .tooltip .t-value { font-weight: 700; font-size: 14px; }
+  .tooltip .t-label { color: var(--text-secondary); margin-top: 2px; }
+
+  /* bar chart */
+  .bars-card { padding: 20px 24px 22px; }
+  .bar-row { display: grid; grid-template-columns: 210px 1fr 56px; align-items: center; gap: 12px; padding: 7px 0; }
+  .bar-row .name { font-size: 13px; color: var(--text-secondary); text-align: right; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .bar-track { position: relative; height: 20px; background: var(--data-hue-soft); border-radius: 4px; }
+  .bar-fill { position: absolute; inset: 0; width: 0; background: var(--data-hue); border-radius: 4px; cursor: default; transition: filter 0.1s; }
+  .bar-fill:hover, .bar-fill:focus { filter: brightness(1.08); outline: none; }
+  .bar-row .val { font-size: 13px; font-weight: 600; font-variant-numeric: tabular-nums; }
+
+  /* quality table */
+  .table-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: 10px; background: var(--surface); }
+  table.quality { border-collapse: collapse; width: 100%; min-width: 720px; font-size: 13.5px; }
+  table.quality th, table.quality td { padding: 11px 16px; text-align: left; border-bottom: 1px solid var(--border); }
+  table.quality th {
+    font-size: 11.5px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase;
+    color: var(--text-muted); background: var(--page-plane);
+  }
+  table.quality tbody tr:last-child td { border-bottom: none; }
+  table.quality td.num { font-variant-numeric: tabular-nums; }
+  .chip-cell { display: inline-flex; align-items: center; gap: 7px; }
+
+  footer.page {
+    max-width: 1180px; margin: 0 auto; padding: 0 clamp(16px, 4vw, 48px) 40px;
+    font-size: 12.5px; color: var(--text-muted); line-height: 1.6;
+  }
+  footer.page .rule { border: none; border-top: 1px solid var(--border); margin: 0 0 20px; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .bar-fill, .tooltip { transition: none; }
+  }
+</style>
+
+<header class="top">
+  <div class="wrap">
+    <div>
+      <div class="eyebrow">CNEEPIP · Évaluation ex-post 2026</div>
+      <h1>Suivi de la collecte terrain</h1>
+    </div>
+    <div class="sync">
+      Dernière synchronisation<br>
+      <strong id="lastSync">—</strong>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section id="tiles-section">
+    <div class="tiles" id="tiles"></div>
+  </section>
+
+  <section>
+    <div class="section-head">
+      <h2>Soumissions par jour, tous projets</h2>
+      <span class="note">Cumul quotidien des 14 formulaires</span>
+    </div>
+    <div class="card trend-card">
+      <svg id="trendSvg" viewBox="0 0 1000 220" preserveAspectRatio="none"></svg>
+    </div>
+  </section>
+
+  <section>
+    <div class="section-head">
+      <h2>Soumissions par projet</h2>
+      <span class="note">Triées par volume décroissant</span>
+    </div>
+    <div class="card bars-card" id="barsCard"></div>
+  </section>
+
+  <section>
+    <div class="section-head">
+      <h2>Qualité de la collecte, par projet</h2>
+      <span class="note">Indicateurs agrégés — aucune donnée individuelle</span>
+    </div>
+    <div class="table-wrap">
+      <table class="quality">
+        <thead>
+          <tr>
+            <th>Projet</th>
+            <th>Soumissions</th>
+            <th>GPS manquant</th>
+            <th>Trop rapides</th>
+            <th>Anormalement longues</th>
+            <th>Dernière soumission</th>
+          </tr>
+        </thead>
+        <tbody id="qualityBody"></tbody>
+      </table>
+    </div>
+  </section>
+</main>
+
+<footer class="page">
+  <hr class="rule">
+  Dashboard alimenté par synchronisation périodique de l'API KoboToolbox (toutes les 10–15 minutes).
+  Ne présente que des statistiques agrégées, conformément à la clause de confidentialité des questionnaires — aucune réponse individuelle, aucune coordonnée GPS précise n'est affichée ici.
+  Généré le <span id="generatedAt">—</span>.
+</footer>
+
+<div class="tooltip" id="tooltip"></div>
+
+<script>
+const DATA = {"generated_at": "2026-08-30T21:28:47", "last_sync": "2026-08-30T21:28:19", "total_submissions": 747, "global_by_day": [["2026-08-03", 1], ["2026-08-09", 4], ["2026-08-10", 2], ["2026-08-12", 1], ["2026-08-18", 73], ["2026-08-19", 38], ["2026-08-20", 92], ["2026-08-21", 185], ["2026-08-22", 154], ["2026-08-23", 68], ["2026-08-24", 30], ["2026-08-25", 82], ["2026-08-26", 17]], "projects": [{"key": "saep_menages", "label": "SAEP Mindouli - Ménages", "total": 73, "by_day": [["2026-08-09", 1], ["2026-08-21", 54], ["2026-08-22", 18]], "validation_counts": {"Non validé": 73}, "pct_missing_gps": 1.4, "duration_median": 20.7, "n_trop_rapide": 12, "n_trop_long": 10, "last_submission": "2026-08-22T12:59:09"}, {"key": "saep_centres_sante", "label": "SAEP Mindouli - Centres de santé", "total": 74, "by_day": [["2026-08-21", 64], ["2026-08-22", 10]], "validation_counts": {"Non validé": 74}, "pct_missing_gps": 0.0, "duration_median": 15.4, "n_trop_rapide": 1, "n_trop_long": 3, "last_submission": "2026-08-22T10:54:21"}, {"key": "saep_administration", "label": "SAEP Mindouli - Administration", "total": 37, "by_day": [["2026-08-03", 1], ["2026-08-21", 29], ["2026-08-22", 7]], "validation_counts": {"Non validé": 37}, "pct_missing_gps": 8.1, "duration_median": 36.3, "n_trop_rapide": 0, "n_trop_long": 6, "last_submission": "2026-08-22T11:08:44"}, {"key": "hopitaux_administration", "label": "Hôpitaux - Administration", "total": 71, "by_day": [["2026-08-09", 2], ["2026-08-22", 68], ["2026-08-23", 1]], "validation_counts": {"Non validé": 71}, "pct_missing_gps": 2.8, "duration_median": 16.0, "n_trop_rapide": 1, "n_trop_long": 1, "last_submission": "2026-08-23T18:15:52"}, {"key": "hopitaux_patients", "label": "Hôpitaux - Patients/accompagnants", "total": 39, "by_day": [["2026-08-22", 39]], "validation_counts": {"Non validé": 39}, "pct_missing_gps": 0.0, "duration_median": 7.6, "n_trop_rapide": 1, "n_trop_long": 0, "last_submission": "2026-08-22T13:51:13"}, {"key": "boundji_administration", "label": "Route Boundji-Ewo - Administration", "total": 96, "by_day": [["2026-08-18", 55], ["2026-08-19", 1], ["2026-08-21", 1], ["2026-08-25", 39]], "validation_counts": {"Non validé": 96}, "pct_missing_gps": 0.0, "duration_median": 39.1, "n_trop_rapide": 3, "n_trop_long": 8, "last_submission": "2026-08-25T21:35:12"}, {"key": "boundji_usagers", "label": "Route Boundji-Ewo - Usagers", "total": 40, "by_day": [["2026-08-12", 1], ["2026-08-18", 4], ["2026-08-20", 1], ["2026-08-25", 34]], "validation_counts": {"Non validé": 40}, "pct_missing_gps": 2.5, "duration_median": 9.3, "n_trop_rapide": 3, "n_trop_long": 5, "last_submission": "2026-08-25T22:37:26"}, {"key": "lycee", "label": "Lycées (Moukondo et Siafoumou)", "total": 62, "by_day": [["2026-08-18", 14], ["2026-08-19", 19], ["2026-08-20", 2], ["2026-08-22", 1], ["2026-08-25", 9], ["2026-08-26", 17]], "validation_counts": {"Non validé": 62}, "pct_missing_gps": 0.0, "duration_median": 70.2, "n_trop_rapide": 0, "n_trop_long": 15, "last_submission": "2026-08-26T09:33:00"}, {"key": "erosion_administration", "label": "Érosion Ngamakosso - Administration", "total": 34, "by_day": [["2026-08-22", 3], ["2026-08-23", 21], ["2026-08-24", 10]], "validation_counts": {"Non validé": 34}, "pct_missing_gps": 0.0, "duration_median": 19.4, "n_trop_rapide": 1, "n_trop_long": 3, "last_submission": "2026-08-24T10:58:42"}, {"key": "erosion_menages", "label": "Érosion Ngamakosso - Ménages", "total": 72, "by_day": [["2026-08-09", 1], ["2026-08-22", 6], ["2026-08-23", 45], ["2026-08-24", 20]], "validation_counts": {"Non validé": 72}, "pct_missing_gps": 1.4, "duration_median": 7.1, "n_trop_rapide": 11, "n_trop_long": 2, "last_submission": "2026-08-24T10:46:25"}, {"key": "ppfnc_administrateurs", "label": "PPFNC - Administrateurs", "total": 36, "by_day": [["2026-08-20", 20], ["2026-08-21", 15], ["2026-08-22", 1]], "validation_counts": {"Non validé": 36}, "pct_missing_gps": 0.0, "duration_median": 121.5, "n_trop_rapide": 0, "n_trop_long": 5, "last_submission": "2026-08-22T12:39:05"}, {"key": "ppfnc_beneficiaires", "label": "PPFNC - Bénéficiaires", "total": 36, "by_day": [["2026-08-20", 19], ["2026-08-21", 15], ["2026-08-22", 1], ["2026-08-23", 1]], "validation_counts": {"Non validé": 36}, "pct_missing_gps": 0.0, "duration_median": 31.1, "n_trop_rapide": 0, "n_trop_long": 13, "last_submission": "2026-08-23T18:31:16"}, {"key": "prcce_administration", "label": "PRCCE II - Administration", "total": 38, "by_day": [["2026-08-10", 1], ["2026-08-20", 36], ["2026-08-21", 1]], "validation_counts": {"Non validé": 38}, "pct_missing_gps": 2.6, "duration_median": 77.7, "n_trop_rapide": 0, "n_trop_long": 0, "last_submission": "2026-08-21T11:59:01"}, {"key": "prcce_clusters", "label": "PRCCE II - Clusters", "total": 39, "by_day": [["2026-08-10", 1], ["2026-08-19", 18], ["2026-08-20", 14], ["2026-08-21", 6]], "validation_counts": {"Non validé": 39}, "pct_missing_gps": 2.6, "duration_median": 28.5, "n_trop_rapide": 0, "n_trop_long": 6, "last_submission": "2026-08-21T13:43:00"}]};
+
+function fmtInt(n) { return n.toLocaleString("fr-FR"); }
+
+function relTime(iso) {
+  if (!iso) return "—";
+  const d = new Date(iso.replace(" ", "T"));
+  const now = new Date(DATA.generated_at.replace(" ", "T"));
+  const diffMs = now - d;
+  const mins = Math.round(diffMs / 60000);
+  if (mins < 1) return "à l'instant";
+  if (mins < 60) return `il y a ${mins} min`;
+  const hrs = Math.round(mins / 60);
+  if (hrs < 24) return `il y a ${hrs} h`;
+  const days = Math.round(hrs / 24);
+  return `il y a ${days} j`;
+}
+
+function fmtDate(iso) {
+  if (!iso) return "—";
+  const d = new Date(iso.replace(" ", "T"));
+  return d.toLocaleString("fr-FR", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" });
+}
+
+function statusTier(pct, warnAt, critAt) {
+  if (pct >= critAt) return "critical";
+  if (pct >= warnAt) return "warning";
+  return "good";
+}
+
+function chip(tier, text) {
+  return `<span class="chip-cell"><span class="dot ${tier}"></span>${text}</span>`;
+}
+
+// ---- stat tiles ----
+function buildTiles() {
+  const totalSub = DATA.total_submissions;
+  const nProjects = DATA.projects.length;
+  const now = new Date(DATA.generated_at.replace(" ", "T"));
+  const cutoff = new Date(now); cutoff.setDate(cutoff.getDate() - 6);
+  const cutoffStr = cutoff.toISOString().slice(0, 10);
+  const last7 = DATA.global_by_day.filter(([day]) => day >= cutoffStr).reduce((a, [, c]) => a + c, 0);
+  let totalValidated = 0, totalAll = 0;
+  DATA.projects.forEach(p => {
+    totalAll += p.total;
+    totalValidated += (p.validation_counts["Validé"] || p.validation_counts["Validated"] || 0);
+  });
+  const pctValidated = totalAll ? Math.round(1000 * totalValidated / totalAll) / 10 : 0;
+
+  const tiles = [
+    { label: "Soumissions totales", value: fmtInt(totalSub), caption: `${nProjects} formulaires actifs` },
+    { label: "7 derniers jours", value: fmtInt(last7), caption: "soumissions reçues" },
+    { label: "Projets suivis", value: String(nProjects), caption: "SAEP, Hôpitaux, Érosion, PPFNC, PRCCE, Boundji-Ewo, Lycée" },
+    { label: "Taux de validation", value: pctValidated + "%", caption: pctValidated === 0 ? "aucune validation à ce jour" : "des soumissions validées",
+      chipTier: pctValidated === 0 ? "warning" : "good", chipText: pctValidated === 0 ? "en attente de revue" : "en cours" },
+  ];
+
+  document.getElementById("tiles").innerHTML = tiles.map(t => `
+    <div class="card tile">
+      <div class="label">${t.label}</div>
+      <div class="value">${t.value}</div>
+      <div class="caption">${t.caption}</div>
+      ${t.chipTier ? `<div class="chip">${chip(t.chipTier, t.chipText)}</div>` : ""}
+    </div>
+  `).join("");
+}
+
+// ---- trend line chart ----
+function buildTrend() {
+  const svg = document.getElementById("trendSvg");
+  const days = DATA.global_by_day;
+  if (!days.length) { svg.innerHTML = ""; return; }
+
+  const W = 1000, H = 220, padL = 36, padR = 12, padT = 14, padB = 26;
+  const plotW = W - padL - padR, plotH = H - padT - padB;
+  const counts = days.map(d => d[1]);
+  const maxV = Math.max(...counts, 1);
+  const niceMax = Math.ceil(maxV / 10) * 10 || 10;
+
+  const x = i => padL + (days.length === 1 ? plotW / 2 : (i / (days.length - 1)) * plotW);
+  const y = v => padT + plotH - (v / niceMax) * plotH;
+
+  let gridSvg = "";
+  const steps = 4;
+  for (let s = 0; s <= steps; s++) {
+    const v = (niceMax / steps) * s;
+    const yy = y(v);
+    gridSvg += `<line class="grid-line" x1="${padL}" x2="${W - padR}" y1="${yy}" y2="${yy}"></line>`;
+    gridSvg += `<text class="axis-label" x="${padL - 8}" y="${yy + 4}" text-anchor="end">${Math.round(v)}</text>`;
+  }
+
+  const linePts = days.map((d, i) => `${x(i)},${y(d[1])}`).join(" ");
+  const areaPts = `${x(0)},${y(0)} ` + linePts + ` ${x(days.length - 1)},${y(0)}`;
+
+  const dateLabels = [];
+  const labelEvery = Math.max(1, Math.ceil(days.length / 6));
+  days.forEach((d, i) => {
+    if (i % labelEvery === 0 || i === days.length - 1) {
+      const dt = new Date(d[0]);
+      const lbl = dt.toLocaleDateString("fr-FR", { day: "2-digit", month: "2-digit" });
+      dateLabels.push(`<text class="axis-label" x="${x(i)}" y="${H - 6}" text-anchor="middle">${lbl}</text>`);
+    }
+  });
+
+  const dots = days.map((d, i) => `<circle class="trend-dot" cx="${x(i)}" cy="${y(d[1])}" r="3.5" data-i="${i}"></circle>`).join("");
+
+  svg.innerHTML = `
+    ${gridSvg}
+    <polygon class="trend-area" points="${areaPts}"></polygon>
+    <polyline class="trend-line" points="${linePts}"></polyline>
+    ${dots}
+    ${dateLabels.join("")}
+    <line class="crosshair" id="crosshair" x1="0" x2="0" y1="${padT}" y2="${padT + plotH}" style="opacity:0"></line>
+    <rect x="${padL}" y="${padT}" width="${plotW}" height="${plotH}" fill="transparent" id="trendHit"></rect>
+  `;
+
+  const hit = document.getElementById("trendHit");
+  const crosshair = document.getElementById("crosshair");
+  const tooltip = document.getElementById("tooltip");
+
+  function showAt(i) {
+    const d = days[i];
+    crosshair.setAttribute("x1", x(i));
+    crosshair.setAttribute("x2", x(i));
+    crosshair.style.opacity = "1";
+    const dt = new Date(d[0]);
+    tooltip.innerHTML = `<div class="t-value">${fmtInt(d[1])} soumission${d[1] > 1 ? "s" : ""}</div>
+                         <div class="t-label">${dt.toLocaleDateString("fr-FR", { weekday: "long", day: "2-digit", month: "long" })}</div>`;
+    tooltip.style.opacity = "1";
+  }
+
+  hit.addEventListener("pointermove", e => {
+    const rect = svg.getBoundingClientRect();
+    const scaleX = W / rect.width;
+    const px = (e.clientX - rect.left) * scaleX;
+    let i = Math.round(((px - padL) / plotW) * (days.length - 1));
+    i = Math.max(0, Math.min(days.length - 1, i));
+    showAt(i);
+    tooltip.style.left = (e.clientX + 14) + "px";
+    tooltip.style.top = (e.clientY - 10) + "px";
+  });
+  hit.addEventListener("pointerleave", () => {
+    crosshair.style.opacity = "0";
+    tooltip.style.opacity = "0";
+  });
+}
+
+// ---- horizontal bar chart ----
+function buildBars() {
+  const sorted = [...DATA.projects].sort((a, b) => b.total - a.total);
+  const maxV = Math.max(...sorted.map(p => p.total), 1);
+  const card = document.getElementById("barsCard");
+  const tooltip = document.getElementById("tooltip");
+
+  card.innerHTML = sorted.map(p => `
+    <div class="bar-row">
+      <div class="name" title="${p.label}">${p.label}</div>
+      <div class="bar-track">
+        <div class="bar-fill" data-key="${p.key}" tabindex="0" style="width:${(p.total / maxV * 100).toFixed(1)}%"></div>
+      </div>
+      <div class="val">${fmtInt(p.total)}</div>
+    </div>
+  `).join("");
+
+  card.querySelectorAll(".bar-fill").forEach(el => {
+    const proj = sorted.find(p => p.key === el.dataset.key);
+    const show = e => {
+      tooltip.innerHTML = `<div class="t-value">${fmtInt(proj.total)} soumissions</div><div class="t-label">${proj.label}</div>`;
+      tooltip.style.opacity = "1";
+      tooltip.style.left = (e.clientX + 14) + "px";
+      tooltip.style.top = (e.clientY - 10) + "px";
+    };
+    el.addEventListener("pointermove", show);
+    el.addEventListener("pointerleave", () => tooltip.style.opacity = "0");
+    el.addEventListener("focus", e => {
+      const r = el.getBoundingClientRect();
+      show({ clientX: r.right, clientY: r.top });
+    });
+    el.addEventListener("blur", () => tooltip.style.opacity = "0");
+  });
+}
+
+// ---- quality table ----
+function buildQualityTable() {
+  const sorted = [...DATA.projects].sort((a, b) => b.total - a.total);
+  document.getElementById("qualityBody").innerHTML = sorted.map(p => {
+    const gpsTier = statusTier(p.pct_missing_gps, 5, 15);
+    const pctRapide = p.total ? Math.round(1000 * p.n_trop_rapide / p.total) / 10 : 0;
+    const pctLong = p.total ? Math.round(1000 * p.n_trop_long / p.total) / 10 : 0;
+    const rapideTier = statusTier(pctRapide, 5, 15);
+    const longTier = statusTier(pctLong, 5, 15);
+    return `
+      <tr>
+        <td>${p.label}</td>
+        <td class="num">${fmtInt(p.total)}</td>
+        <td>${chip(gpsTier, p.pct_missing_gps + "%")}</td>
+        <td>${chip(rapideTier, `${p.n_trop_rapide} (${pctRapide}%)`)}</td>
+        <td>${chip(longTier, `${p.n_trop_long} (${pctLong}%)`)}</td>
+        <td>${relTime(p.last_submission)}</td>
+      </tr>
+    `;
+  }).join("");
+}
+
+document.getElementById("lastSync").textContent = fmtDate(DATA.last_sync);
+document.getElementById("generatedAt").textContent = fmtDate(DATA.generated_at);
+buildTiles();
+buildTrend();
+buildBars();
+buildQualityTable();
+</script>
