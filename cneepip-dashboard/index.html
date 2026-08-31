@@ -22,6 +22,8 @@
     --data-hue:        #2a78d6;
     --data-hue-soft:   rgba(42,120,214,0.12);
     --data-hue-dim:    #93b8e4;
+    --series-1: #2a78d6;
+    --series-2: #eb6834;
     --good:    #0ca30c;
     --warning: #fab219;
     --critical:#d03b3b;
@@ -46,6 +48,8 @@
       --data-hue:        #3987e5;
       --data-hue-soft:   rgba(57,135,229,0.16);
       --data-hue-dim:    #3d557a;
+      --series-1: #3987e5;
+      --series-2: #d95926;
       --good:    #0ca30c;
       --warning: #fab219;
       --critical:#e66767;
@@ -70,6 +74,8 @@
     --data-hue:        #3987e5;
     --data-hue-soft:   rgba(57,135,229,0.16);
     --data-hue-dim:    #3d557a;
+    --series-1: #3987e5;
+    --series-2: #d95926;
     --good:    #0ca30c;
     --warning: #fab219;
     --critical:#e66767;
@@ -161,6 +167,19 @@
   .bar-fill:hover, .bar-fill:focus { filter: brightness(1.08); outline: none; }
   .bar-row .val { font-size: 13px; font-weight: 600; font-variant-numeric: tabular-nums; }
 
+  /* groupe traite / non-traite */
+  .legend { display: flex; gap: 18px; align-items: center; font-size: 12.5px; color: var(--text-secondary); }
+  .legend-item { display: inline-flex; align-items: center; gap: 6px; }
+  .legend-swatch { width: 11px; height: 11px; border-radius: 3px; flex: none; }
+  .group-row { display: grid; grid-template-columns: 210px 1fr 130px; align-items: center; gap: 12px; padding: 7px 0; }
+  .group-row .name { font-size: 13px; color: var(--text-secondary); text-align: right; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .group-track { position: relative; height: 20px; display: flex; gap: 2px; }
+  .group-seg { position: relative; border-radius: 4px; cursor: default; }
+  .group-seg.s1 { background: var(--series-1); }
+  .group-seg.s2 { background: var(--series-2); }
+  .group-row .val { font-size: 12.5px; font-variant-numeric: tabular-nums; color: var(--text-secondary); white-space: nowrap; }
+  .group-row .val strong { color: var(--text-primary); font-weight: 600; }
+
   /* quality table */
   .table-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: 10px; background: var(--surface); }
   table.quality { border-collapse: collapse; width: 100%; min-width: 720px; font-size: 13.5px; }
@@ -220,6 +239,17 @@
     <div class="card bars-card" id="barsCard"></div>
   </section>
 
+  <section id="group-section">
+    <div class="section-head">
+      <h2>Soumissions Traité / Non traité</h2>
+      <span class="legend">
+        <span class="legend-item"><span class="legend-swatch" style="background:var(--series-1)"></span>Bénéficiaire (Traité)</span>
+        <span class="legend-item"><span class="legend-swatch" style="background:var(--series-2)"></span>Non bénéficiaire (Contrôle)</span>
+      </span>
+    </div>
+    <div class="card bars-card" id="groupCard"></div>
+  </section>
+
   <section>
     <div class="section-head">
       <h2>Qualité de la collecte, par projet</h2>
@@ -253,7 +283,7 @@
 <div class="tooltip" id="tooltip"></div>
 
 <script>
-const DATA = {"generated_at": "2026-08-31T18:29:10", "last_sync": "2026-08-31T18:28:28", "total_submissions": 747, "global_by_day": [["2026-08-03", 1], ["2026-08-09", 4], ["2026-08-10", 2], ["2026-08-12", 1], ["2026-08-18", 73], ["2026-08-19", 38], ["2026-08-20", 92], ["2026-08-21", 185], ["2026-08-22", 154], ["2026-08-23", 68], ["2026-08-24", 30], ["2026-08-25", 82], ["2026-08-26", 17]], "projects": [{"key": "saep_menages", "label": "SAEP Mindouli - Ménages", "total": 73, "by_day": [["2026-08-09", 1], ["2026-08-21", 54], ["2026-08-22", 18]], "validation_counts": {"Non validé": 73}, "pct_missing_gps": 1.4, "duration_median": 20.7, "n_trop_rapide": 12, "n_trop_long": 10, "last_submission": "2026-08-22T12:59:09"}, {"key": "saep_centres_sante", "label": "SAEP Mindouli - Centres de santé", "total": 74, "by_day": [["2026-08-21", 64], ["2026-08-22", 10]], "validation_counts": {"Non validé": 74}, "pct_missing_gps": 0.0, "duration_median": 15.4, "n_trop_rapide": 1, "n_trop_long": 3, "last_submission": "2026-08-22T10:54:21"}, {"key": "saep_administration", "label": "SAEP Mindouli - Administration", "total": 37, "by_day": [["2026-08-03", 1], ["2026-08-21", 29], ["2026-08-22", 7]], "validation_counts": {"Non validé": 37}, "pct_missing_gps": 8.1, "duration_median": 36.3, "n_trop_rapide": 0, "n_trop_long": 6, "last_submission": "2026-08-22T11:08:44"}, {"key": "hopitaux_administration", "label": "Hôpitaux - Administration", "total": 71, "by_day": [["2026-08-09", 2], ["2026-08-22", 68], ["2026-08-23", 1]], "validation_counts": {"Non validé": 71}, "pct_missing_gps": 2.8, "duration_median": 16.0, "n_trop_rapide": 1, "n_trop_long": 1, "last_submission": "2026-08-23T18:15:52"}, {"key": "hopitaux_patients", "label": "Hôpitaux - Patients/accompagnants", "total": 39, "by_day": [["2026-08-22", 39]], "validation_counts": {"Non validé": 39}, "pct_missing_gps": 0.0, "duration_median": 7.6, "n_trop_rapide": 1, "n_trop_long": 0, "last_submission": "2026-08-22T13:51:13"}, {"key": "boundji_administration", "label": "Route Boundji-Ewo - Administration", "total": 96, "by_day": [["2026-08-18", 55], ["2026-08-19", 1], ["2026-08-21", 1], ["2026-08-25", 39]], "validation_counts": {"Non validé": 96}, "pct_missing_gps": 0.0, "duration_median": 39.1, "n_trop_rapide": 3, "n_trop_long": 8, "last_submission": "2026-08-25T21:35:12"}, {"key": "boundji_usagers", "label": "Route Boundji-Ewo - Usagers", "total": 40, "by_day": [["2026-08-12", 1], ["2026-08-18", 4], ["2026-08-20", 1], ["2026-08-25", 34]], "validation_counts": {"Non validé": 40}, "pct_missing_gps": 2.5, "duration_median": 9.3, "n_trop_rapide": 3, "n_trop_long": 5, "last_submission": "2026-08-25T22:37:26"}, {"key": "lycee", "label": "Lycées (Moukondo et Siafoumou)", "total": 62, "by_day": [["2026-08-18", 14], ["2026-08-19", 19], ["2026-08-20", 2], ["2026-08-22", 1], ["2026-08-25", 9], ["2026-08-26", 17]], "validation_counts": {"Non validé": 62}, "pct_missing_gps": 0.0, "duration_median": 70.2, "n_trop_rapide": 0, "n_trop_long": 15, "last_submission": "2026-08-26T09:33:00"}, {"key": "erosion_administration", "label": "Érosion Ngamakosso - Administration", "total": 34, "by_day": [["2026-08-22", 3], ["2026-08-23", 21], ["2026-08-24", 10]], "validation_counts": {"Non validé": 34}, "pct_missing_gps": 0.0, "duration_median": 19.4, "n_trop_rapide": 1, "n_trop_long": 3, "last_submission": "2026-08-24T10:58:42"}, {"key": "erosion_menages", "label": "Érosion Ngamakosso - Ménages", "total": 72, "by_day": [["2026-08-09", 1], ["2026-08-22", 6], ["2026-08-23", 45], ["2026-08-24", 20]], "validation_counts": {"Non validé": 72}, "pct_missing_gps": 1.4, "duration_median": 7.1, "n_trop_rapide": 11, "n_trop_long": 2, "last_submission": "2026-08-24T10:46:25"}, {"key": "ppfnc_administrateurs", "label": "PPFNC - Administrateurs", "total": 36, "by_day": [["2026-08-20", 20], ["2026-08-21", 15], ["2026-08-22", 1]], "validation_counts": {"Non validé": 36}, "pct_missing_gps": 0.0, "duration_median": 121.5, "n_trop_rapide": 0, "n_trop_long": 5, "last_submission": "2026-08-22T12:39:05"}, {"key": "ppfnc_beneficiaires", "label": "PPFNC - Bénéficiaires", "total": 36, "by_day": [["2026-08-20", 19], ["2026-08-21", 15], ["2026-08-22", 1], ["2026-08-23", 1]], "validation_counts": {"Non validé": 36}, "pct_missing_gps": 0.0, "duration_median": 31.1, "n_trop_rapide": 0, "n_trop_long": 13, "last_submission": "2026-08-23T18:31:16"}, {"key": "prcce_administration", "label": "PRCCE II - Administration", "total": 38, "by_day": [["2026-08-10", 1], ["2026-08-20", 36], ["2026-08-21", 1]], "validation_counts": {"Non validé": 38}, "pct_missing_gps": 2.6, "duration_median": 77.7, "n_trop_rapide": 0, "n_trop_long": 0, "last_submission": "2026-08-21T11:59:01"}, {"key": "prcce_clusters", "label": "PRCCE II - Clusters", "total": 39, "by_day": [["2026-08-10", 1], ["2026-08-19", 18], ["2026-08-20", 14], ["2026-08-21", 6]], "validation_counts": {"Non validé": 39}, "pct_missing_gps": 2.6, "duration_median": 28.5, "n_trop_rapide": 0, "n_trop_long": 6, "last_submission": "2026-08-21T13:43:00"}]};
+const DATA = {"generated_at": "2026-08-31T18:37:19", "last_sync": "2026-08-31T18:36:57", "total_submissions": 747, "global_by_day": [["2026-08-03", 1], ["2026-08-09", 4], ["2026-08-10", 2], ["2026-08-12", 1], ["2026-08-18", 73], ["2026-08-19", 38], ["2026-08-20", 92], ["2026-08-21", 185], ["2026-08-22", 154], ["2026-08-23", 68], ["2026-08-24", 30], ["2026-08-25", 82], ["2026-08-26", 17]], "projects": [{"key": "saep_menages", "label": "SAEP Mindouli - Ménages", "total": 73, "by_day": [["2026-08-09", 1], ["2026-08-21", 54], ["2026-08-22", 18]], "validation_counts": {"Non validé": 73}, "group_counts": {"Bénéficiaire (Traité)": 37, "Non bénéficiaire (Contrôle)": 36}, "pct_missing_gps": 1.4, "duration_median": 20.7, "n_trop_rapide": 12, "n_trop_long": 10, "last_submission": "2026-08-22T12:59:09"}, {"key": "saep_centres_sante", "label": "SAEP Mindouli - Centres de santé", "total": 74, "by_day": [["2026-08-21", 64], ["2026-08-22", 10]], "validation_counts": {"Non validé": 74}, "group_counts": {"Bénéficiaire (Traité)": 37, "Non bénéficiaire (Contrôle)": 37}, "pct_missing_gps": 0.0, "duration_median": 15.4, "n_trop_rapide": 1, "n_trop_long": 3, "last_submission": "2026-08-22T10:54:21"}, {"key": "saep_administration", "label": "SAEP Mindouli - Administration", "total": 37, "by_day": [["2026-08-03", 1], ["2026-08-21", 29], ["2026-08-22", 7]], "validation_counts": {"Non validé": 37}, "group_counts": {}, "pct_missing_gps": 8.1, "duration_median": 36.3, "n_trop_rapide": 0, "n_trop_long": 6, "last_submission": "2026-08-22T11:08:44"}, {"key": "hopitaux_administration", "label": "Hôpitaux - Administration", "total": 71, "by_day": [["2026-08-09", 2], ["2026-08-22", 68], ["2026-08-23", 1]], "validation_counts": {"Non validé": 71}, "group_counts": {"Non bénéficiaire (Contrôle)": 35, "Bénéficiaire (Traité)": 36}, "pct_missing_gps": 2.8, "duration_median": 16.0, "n_trop_rapide": 1, "n_trop_long": 1, "last_submission": "2026-08-23T18:15:52"}, {"key": "hopitaux_patients", "label": "Hôpitaux - Patients/accompagnants", "total": 39, "by_day": [["2026-08-22", 39]], "validation_counts": {"Non validé": 39}, "group_counts": {}, "pct_missing_gps": 0.0, "duration_median": 7.6, "n_trop_rapide": 1, "n_trop_long": 0, "last_submission": "2026-08-22T13:51:13"}, {"key": "boundji_administration", "label": "Route Boundji-Ewo - Administration", "total": 96, "by_day": [["2026-08-18", 55], ["2026-08-19", 1], ["2026-08-21", 1], ["2026-08-25", 39]], "validation_counts": {"Non validé": 96}, "group_counts": {"Bénéficiaire (Traité)": 75, "Non bénéficiaire (Contrôle)": 21}, "pct_missing_gps": 0.0, "duration_median": 39.1, "n_trop_rapide": 3, "n_trop_long": 8, "last_submission": "2026-08-25T21:35:12"}, {"key": "boundji_usagers", "label": "Route Boundji-Ewo - Usagers", "total": 40, "by_day": [["2026-08-12", 1], ["2026-08-18", 4], ["2026-08-20", 1], ["2026-08-25", 34]], "validation_counts": {"Non validé": 40}, "group_counts": {"Bénéficiaire (Traité)": 19, "Non bénéficiaire (Contrôle)": 21}, "pct_missing_gps": 2.5, "duration_median": 9.3, "n_trop_rapide": 3, "n_trop_long": 5, "last_submission": "2026-08-25T22:37:26"}, {"key": "lycee", "label": "Lycées (Moukondo et Siafoumou)", "total": 62, "by_day": [["2026-08-18", 14], ["2026-08-19", 19], ["2026-08-20", 2], ["2026-08-22", 1], ["2026-08-25", 9], ["2026-08-26", 17]], "validation_counts": {"Non validé": 62}, "group_counts": {"Bénéficiaire (Traité)": 50, "Non bénéficiaire (Contrôle)": 12}, "pct_missing_gps": 0.0, "duration_median": 70.2, "n_trop_rapide": 0, "n_trop_long": 15, "last_submission": "2026-08-26T09:33:00"}, {"key": "erosion_administration", "label": "Érosion Ngamakosso - Administration", "total": 34, "by_day": [["2026-08-22", 3], ["2026-08-23", 21], ["2026-08-24", 10]], "validation_counts": {"Non validé": 34}, "group_counts": {}, "pct_missing_gps": 0.0, "duration_median": 19.4, "n_trop_rapide": 1, "n_trop_long": 3, "last_submission": "2026-08-24T10:58:42"}, {"key": "erosion_menages", "label": "Érosion Ngamakosso - Ménages", "total": 72, "by_day": [["2026-08-09", 1], ["2026-08-22", 6], ["2026-08-23", 45], ["2026-08-24", 20]], "validation_counts": {"Non validé": 72}, "group_counts": {"Non bénéficiaire (Contrôle)": 35, "Bénéficiaire (Traité)": 37}, "pct_missing_gps": 1.4, "duration_median": 7.1, "n_trop_rapide": 11, "n_trop_long": 2, "last_submission": "2026-08-24T10:46:25"}, {"key": "ppfnc_administrateurs", "label": "PPFNC - Administrateurs", "total": 36, "by_day": [["2026-08-20", 20], ["2026-08-21", 15], ["2026-08-22", 1]], "validation_counts": {"Non validé": 36}, "group_counts": {}, "pct_missing_gps": 0.0, "duration_median": 121.5, "n_trop_rapide": 0, "n_trop_long": 5, "last_submission": "2026-08-22T12:39:05"}, {"key": "ppfnc_beneficiaires", "label": "PPFNC - Bénéficiaires", "total": 36, "by_day": [["2026-08-20", 19], ["2026-08-21", 15], ["2026-08-22", 1], ["2026-08-23", 1]], "validation_counts": {"Non validé": 36}, "group_counts": {}, "pct_missing_gps": 0.0, "duration_median": 31.1, "n_trop_rapide": 0, "n_trop_long": 13, "last_submission": "2026-08-23T18:31:16"}, {"key": "prcce_administration", "label": "PRCCE II - Administration", "total": 38, "by_day": [["2026-08-10", 1], ["2026-08-20", 36], ["2026-08-21", 1]], "validation_counts": {"Non validé": 38}, "group_counts": {}, "pct_missing_gps": 2.6, "duration_median": 77.7, "n_trop_rapide": 0, "n_trop_long": 0, "last_submission": "2026-08-21T11:59:01"}, {"key": "prcce_clusters", "label": "PRCCE II - Clusters", "total": 39, "by_day": [["2026-08-10", 1], ["2026-08-19", 18], ["2026-08-20", 14], ["2026-08-21", 6]], "validation_counts": {"Non validé": 39}, "group_counts": {}, "pct_missing_gps": 2.6, "duration_median": 28.5, "n_trop_rapide": 0, "n_trop_long": 6, "last_submission": "2026-08-21T13:43:00"}]};
 
 function fmtInt(n) { return n.toLocaleString("fr-FR"); }
 
@@ -435,6 +465,65 @@ function buildBars() {
   });
 }
 
+// ---- groupe traite / non-traite (uniquement les projets qui comparent 2 groupes) ----
+function buildGroupBars() {
+  const withGroups = DATA.projects.filter(p => p.group_counts && Object.keys(p.group_counts).length > 0);
+  const card = document.getElementById("groupCard");
+  const section = document.getElementById("group-section");
+  if (!withGroups.length) { section.style.display = "none"; return; }
+
+  const TRAITE_KEYS = ["Bénéficiaire (Traité)"];
+  const maxV = Math.max(...withGroups.map(p => p.total), 1);
+  const tooltip = document.getElementById("tooltip");
+
+  function pickCounts(p) {
+    let traite = 0, controle = 0;
+    for (const [label, count] of Object.entries(p.group_counts)) {
+      if (TRAITE_KEYS.includes(label)) traite += count;
+      else controle += count;
+    }
+    return { traite, controle };
+  }
+
+  card.innerHTML = withGroups
+    .sort((a, b) => b.total - a.total)
+    .map(p => {
+      const { traite, controle } = pickCounts(p);
+      const wTraite = (traite / maxV * 100).toFixed(1);
+      const wControle = (controle / maxV * 100).toFixed(1);
+      return `
+        <div class="group-row">
+          <div class="name" title="${p.label}">${p.label}</div>
+          <div class="group-track">
+            <div class="group-seg s1" data-key="${p.key}" data-kind="traite" tabindex="0" style="width:${wTraite}%"></div>
+            <div class="group-seg s2" data-key="${p.key}" data-kind="controle" tabindex="0" style="width:${wControle}%"></div>
+          </div>
+          <div class="val"><strong>${fmtInt(traite)}</strong> / <strong>${fmtInt(controle)}</strong></div>
+        </div>
+      `;
+    }).join("");
+
+  card.querySelectorAll(".group-seg").forEach(el => {
+    const proj = withGroups.find(p => p.key === el.dataset.key);
+    const { traite, controle } = pickCounts(proj);
+    const isTraite = el.dataset.kind === "traite";
+    const show = e => {
+      tooltip.innerHTML = `<div class="t-value">${fmtInt(isTraite ? traite : controle)} soumissions</div>
+                           <div class="t-label">${proj.label} — ${isTraite ? "Bénéficiaire (Traité)" : "Non bénéficiaire (Contrôle)"}</div>`;
+      tooltip.style.opacity = "1";
+      tooltip.style.left = (e.clientX + 14) + "px";
+      tooltip.style.top = (e.clientY - 10) + "px";
+    };
+    el.addEventListener("pointermove", show);
+    el.addEventListener("pointerleave", () => tooltip.style.opacity = "0");
+    el.addEventListener("focus", e => {
+      const r = el.getBoundingClientRect();
+      show({ clientX: r.right, clientY: r.top });
+    });
+    el.addEventListener("blur", () => tooltip.style.opacity = "0");
+  });
+}
+
 // ---- quality table ----
 function buildQualityTable() {
   const sorted = [...DATA.projects].sort((a, b) => b.total - a.total);
@@ -462,5 +551,6 @@ document.getElementById("generatedAt").textContent = fmtDate(DATA.generated_at);
 buildTiles();
 buildTrend();
 buildBars();
+buildGroupBars();
 buildQualityTable();
 </script>
